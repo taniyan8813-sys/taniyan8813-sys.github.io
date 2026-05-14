@@ -13,7 +13,18 @@ const ui = {
   statScore: document.getElementById("statScore"),
   systemLog: document.getElementById("systemLog"),
   upgradePanel: document.getElementById("upgradePanel"),
-  upgradeChoices: document.getElementById("upgradeChoices")
+  upgradeChoices: document.getElementById("upgradeChoices"),
+  titleScreen: document.getElementById("titleScreen"),
+  resultScreen: document.getElementById("resultScreen"),
+  startGame: document.getElementById("startGame"),
+  resultRestart: document.getElementById("resultRestart"),
+  resultKicker: document.getElementById("resultKicker"),
+  resultTitle: document.getElementById("resultTitle"),
+  resultSummary: document.getElementById("resultSummary"),
+  resultTime: document.getElementById("resultTime"),
+  resultWave: document.getElementById("resultWave"),
+  resultRestore: document.getElementById("resultRestore"),
+  resultScore: document.getElementById("resultScore")
 };
 
 const W = canvas.width;
@@ -22,9 +33,10 @@ const BASE = { x: W / 2, y: H - 104, r: 30 };
 const HOLD_LINE_Y = H - 56;
 const pointer = { x: W / 2, y: 150, down: false };
 
-let paused = false;
+let paused = true;
 let lastTime = performance.now();
 let state = makeState();
+let appPhase = "title";
 
 const upgrades = [
   {
@@ -91,6 +103,41 @@ function makeState() {
     gameOver: false,
     cleared: false
   };
+}
+
+function setScreen(name) {
+  ui.titleScreen.hidden = name !== "title";
+  ui.resultScreen.hidden = name !== "result";
+}
+
+function startRun() {
+  state = makeState();
+  paused = false;
+  appPhase = "playing";
+  pointer.down = false;
+  ui.pause.disabled = false;
+  ui.pause.textContent = "一時停止";
+  ui.upgradePanel.hidden = true;
+  setScreen("playing");
+}
+
+function showResult() {
+  if (appPhase === "result") return;
+  appPhase = "result";
+  paused = true;
+  pointer.down = false;
+  ui.pause.disabled = true;
+  ui.pause.textContent = "一時停止";
+  ui.resultKicker.textContent = state.cleared ? "SEQUENCE COMPLETE" : "SEQUENCE FAILED";
+  ui.resultTitle.textContent = state.cleared ? "リコード完了" : "観測中断";
+  ui.resultSummary.textContent = state.cleared
+    ? "観測セクター404を保持。次の検証へ進める状態です。"
+    : "バリアが消失。射撃補正とリコード候補の選択タイミングを見直してください。";
+  ui.resultTime.textContent = `${Math.floor(state.time)}秒`;
+  ui.resultWave.textContent = state.wave;
+  ui.resultRestore.textContent = `${Math.floor(state.restore)}%`;
+  ui.resultScore.textContent = state.score;
+  setScreen("result");
 }
 
 function makeFragments() {
@@ -515,6 +562,7 @@ function updateUi() {
   if (state.gameOver) ui.runState.textContent = "バリア消失";
   else if (state.cleared) ui.runState.textContent = "リコード完了";
   else if (state.upgradeOpen) ui.runState.textContent = "補正を選択";
+  else if (appPhase === "title") ui.runState.textContent = "開始待機";
   else ui.runState.textContent = paused ? "一時停止中" : "EAE起動中";
 }
 
@@ -522,6 +570,7 @@ function loop(now) {
   const dt = Math.min(0.033, (now - lastTime) / 1000);
   lastTime = now;
   if (!paused && !state.gameOver && !state.cleared) update(dt);
+  if ((state.gameOver || state.cleared) && appPhase === "playing") showResult();
   draw();
   updateUi();
   setTimeout(() => loop(performance.now()), 1000 / 60);
@@ -542,12 +591,14 @@ function setAim(event) {
 }
 
 canvas.addEventListener("pointerdown", event => {
+  if (appPhase !== "playing") return;
   pointer.down = true;
   setAim(event);
   canvas.setPointerCapture(event.pointerId);
 });
 
 canvas.addEventListener("pointermove", event => {
+  if (appPhase !== "playing") return;
   if (pointer.down) setAim(event);
 });
 
@@ -561,23 +612,28 @@ canvas.addEventListener("pointercancel", () => {
 });
 
 ui.reset.addEventListener("click", () => {
-  state = makeState();
-  paused = false;
-  ui.pause.textContent = "一時停止";
-  ui.upgradePanel.hidden = true;
+  startRun();
 });
 
 ui.pause.addEventListener("click", () => {
-  if (state.gameOver || state.cleared || state.upgradeOpen) return;
+  if (appPhase !== "playing" || state.gameOver || state.cleared || state.upgradeOpen) return;
   paused = !paused;
   ui.pause.textContent = paused ? "再開" : "一時停止";
 });
 
 window.addEventListener("keydown", event => {
-  if (event.code === "Space" && !state.upgradeOpen && !state.gameOver && !state.cleared) {
+  if (event.code === "Enter" && appPhase !== "playing") {
+    startRun();
+    return;
+  }
+  if (event.code === "Space" && appPhase === "playing" && !state.upgradeOpen && !state.gameOver && !state.cleared) {
     paused = !paused;
     ui.pause.textContent = paused ? "再開" : "一時停止";
   }
 });
 
+ui.startGame.addEventListener("click", startRun);
+ui.resultRestart.addEventListener("click", startRun);
+ui.pause.disabled = true;
+setScreen("title");
 loop(performance.now());

@@ -19,6 +19,30 @@
       <section class="play-layout" aria-label="Game">
         <div class="stage-wrap">
           <canvas id="game" width="960" height="600" aria-label="Survival roguelite game canvas"></canvas>
+          <section class="screen-overlay" id="titleScreen" aria-label="Start screen">
+            <p class="overlay-kicker">SURVIVAL ROGUELITE PROTOTYPE</p>
+            <h2>AKARI : RESTART</h2>
+            <p>敵群を避けながら前進し、信号XPを集めて成長する突破型サバイバル。</p>
+            <ul>
+              <li>移動：WASD / 矢印キー / タッチドラッグ</li>
+              <li>攻撃：近い敵へ自動射撃</li>
+              <li>成長：信号XPを回収して強化を選択</li>
+              <li>目標：一定時間の生存、または到達率100%</li>
+            </ul>
+            <button class="primary-action" id="startGame" type="button">開始</button>
+          </section>
+          <section class="screen-overlay result-overlay" id="resultScreen" aria-label="Result screen" hidden>
+            <p class="overlay-kicker" id="resultKicker">RESULT</p>
+            <h2 id="resultTitle">観測結果</h2>
+            <p id="resultSummary">記録を集計中。</p>
+            <dl class="result-stats">
+              <div><dt>記録時間</dt><dd id="resultTime">0</dd></div>
+              <div><dt>同期LV</dt><dd id="resultLevel">1</dd></div>
+              <div><dt>突破数</dt><dd id="resultKills">0</dd></div>
+              <div><dt>到達率</dt><dd id="resultDistance">0%</dd></div>
+            </dl>
+            <button class="primary-action" id="resultRestart" type="button">再挑戦</button>
+          </section>
         </div>
 
         <aside class="panel">

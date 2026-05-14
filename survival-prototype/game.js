@@ -14,7 +14,18 @@ const ui = {
   statDistance: document.getElementById("statDistance"),
   systemLog: document.getElementById("systemLog"),
   upgradePanel: document.getElementById("upgradePanel"),
-  upgradeChoices: document.getElementById("upgradeChoices")
+  upgradeChoices: document.getElementById("upgradeChoices"),
+  titleScreen: document.getElementById("titleScreen"),
+  resultScreen: document.getElementById("resultScreen"),
+  startGame: document.getElementById("startGame"),
+  resultRestart: document.getElementById("resultRestart"),
+  resultKicker: document.getElementById("resultKicker"),
+  resultTitle: document.getElementById("resultTitle"),
+  resultSummary: document.getElementById("resultSummary"),
+  resultTime: document.getElementById("resultTime"),
+  resultLevel: document.getElementById("resultLevel"),
+  resultKills: document.getElementById("resultKills"),
+  resultDistance: document.getElementById("resultDistance")
 };
 
 const W = canvas.width;
@@ -24,9 +35,10 @@ const GOAL_TIME = 180;
 const DESTINATION_DISTANCE = 1800;
 const touchMove = { active: false, id: null, sx: 0, sy: 0, x: 0, y: 0 };
 
-let paused = false;
+let paused = true;
 let lastTime = performance.now();
 let state = makeState();
+let appPhase = "title";
 
 const upgrades = [
   {
@@ -97,6 +109,45 @@ function makeState() {
     fractures: makeFractures(),
     log: "信号追跡を開始。E-01への経路を固定。"
   };
+}
+
+function setScreen(name) {
+  ui.titleScreen.hidden = name !== "title";
+  ui.resultScreen.hidden = name !== "result";
+}
+
+function startRun() {
+  state = makeState();
+  paused = false;
+  appPhase = "playing";
+  keys.clear();
+  touchMove.active = false;
+  touchMove.id = null;
+  ui.pause.disabled = false;
+  ui.pause.textContent = "一時停止";
+  ui.upgradePanel.hidden = true;
+  setScreen("playing");
+}
+
+function showResult() {
+  if (appPhase === "result") return;
+  appPhase = "result";
+  paused = true;
+  keys.clear();
+  touchMove.active = false;
+  touchMove.id = null;
+  ui.pause.disabled = true;
+  ui.pause.textContent = "一時停止";
+  ui.resultKicker.textContent = state.cleared ? "SIGNAL CONNECTED" : "SIGNAL LOST";
+  ui.resultTitle.textContent = state.cleared ? "接続完了" : "観測中断";
+  ui.resultSummary.textContent = state.cleared
+    ? "ヒカリへの経路を確保。突破型サバイバルの基本ループを確認できました。"
+    : "記録データが欠損。移動ルートと成長選択を変えて再挑戦してください。";
+  ui.resultTime.textContent = `${Math.floor(state.time)}秒`;
+  ui.resultLevel.textContent = state.level;
+  ui.resultKills.textContent = state.kills;
+  ui.resultDistance.textContent = `${Math.floor((state.travel / DESTINATION_DISTANCE) * 100)}%`;
+  setScreen("result");
 }
 
 function makeFractures() {
@@ -691,6 +742,7 @@ function updateUi() {
   if (state.gameOver) ui.runState.textContent = "観測中断";
   else if (state.cleared) ui.runState.textContent = "接続完了";
   else if (state.upgradeOpen) ui.runState.textContent = "信号を選択";
+  else if (appPhase === "title") ui.runState.textContent = "開始待機";
   else ui.runState.textContent = paused ? "一時停止中" : "ヒカリへ向かう";
   ui.systemLog.textContent = state.log;
 }
@@ -699,6 +751,7 @@ function loop(now) {
   const dt = Math.min(0.033, (now - lastTime) / 1000);
   lastTime = now;
   if (!paused && !state.gameOver && !state.cleared) update(dt);
+  if ((state.gameOver || state.cleared) && appPhase === "playing") showResult();
   draw();
   updateUi();
   setTimeout(() => loop(performance.now()), 1000 / 60);
@@ -706,12 +759,16 @@ function loop(now) {
 
 window.addEventListener("keydown", event => {
   keys.add(event.code);
-  if (event.code === "Space" && !state.upgradeOpen && !state.gameOver && !state.cleared) {
+  if (event.code === "Enter" && appPhase !== "playing") {
+    startRun();
+    return;
+  }
+  if (event.code === "Space" && appPhase === "playing" && !state.upgradeOpen && !state.gameOver && !state.cleared) {
     paused = !paused;
     ui.pause.textContent = paused ? "再開" : "一時停止";
   }
   const move = movementVectorFromCode(event.code);
-  if (!paused && !state.gameOver && !state.cleared && (move.x || move.y)) {
+  if (appPhase === "playing" && !paused && !state.gameOver && !state.cleared && (move.x || move.y)) {
     applyMove(move, 0.08);
   }
 });
@@ -729,6 +786,7 @@ function canvasPoint(event) {
 }
 
 canvas.addEventListener("pointerdown", event => {
+  if (appPhase !== "playing") return;
   const p = canvasPoint(event);
   touchMove.active = true;
   touchMove.id = event.pointerId;
@@ -740,6 +798,7 @@ canvas.addEventListener("pointerdown", event => {
 });
 
 canvas.addEventListener("pointermove", event => {
+  if (appPhase !== "playing") return;
   if (!touchMove.active || event.pointerId !== touchMove.id) return;
   const p = canvasPoint(event);
   touchMove.x = p.x;
@@ -759,17 +818,17 @@ canvas.addEventListener("pointercancel", () => {
 });
 
 ui.reset.addEventListener("click", () => {
-  state = makeState();
-  paused = false;
-  touchMove.active = false;
-  ui.pause.textContent = "一時停止";
-  ui.upgradePanel.hidden = true;
+  startRun();
 });
 
 ui.pause.addEventListener("click", () => {
-  if (state.gameOver || state.cleared || state.upgradeOpen) return;
+  if (appPhase !== "playing" || state.gameOver || state.cleared || state.upgradeOpen) return;
   paused = !paused;
   ui.pause.textContent = paused ? "再開" : "一時停止";
 });
 
+ui.startGame.addEventListener("click", startRun);
+ui.resultRestart.addEventListener("click", startRun);
+ui.pause.disabled = true;
+setScreen("title");
 loop(performance.now());

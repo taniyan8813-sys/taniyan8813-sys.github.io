@@ -19,6 +19,30 @@
       <section class="play-layout" aria-label="Game">
         <div class="stage-wrap">
           <canvas id="game" width="960" height="600" aria-label="Line defense game canvas"></canvas>
+          <section class="screen-overlay" id="titleScreen" aria-label="Start screen">
+            <p class="overlay-kicker">DEFENSE PROTOTYPE</p>
+            <h2>GLITCH E-01 : RECODE</h2>
+            <p>観測セクター404を防衛し、EAE支援で押し寄せるノイズを迎撃する。</p>
+            <ul>
+              <li>照準：キャンバス上をクリック / ドラッグ</li>
+              <li>攻撃：自動射撃</li>
+              <li>成長：データXPが満ちたらリコード候補を選択</li>
+              <li>目標：5シーケンスを守り切る</li>
+            </ul>
+            <button class="primary-action" id="startGame" type="button">開始</button>
+          </section>
+          <section class="screen-overlay result-overlay" id="resultScreen" aria-label="Result screen" hidden>
+            <p class="overlay-kicker" id="resultKicker">RESULT</p>
+            <h2 id="resultTitle">観測結果</h2>
+            <p id="resultSummary">記録を集計中。</p>
+            <dl class="result-stats">
+              <div><dt>記録時間</dt><dd id="resultTime">0</dd></div>
+              <div><dt>シーケンス</dt><dd id="resultWave">1</dd></div>
+              <div><dt>復元率</dt><dd id="resultRestore">0%</dd></div>
+              <div><dt>記録値</dt><dd id="resultScore">0</dd></div>
+            </dl>
+            <button class="primary-action" id="resultRestart" type="button">再挑戦</button>
+          </section>
         </div>
 
         <aside class="panel">
