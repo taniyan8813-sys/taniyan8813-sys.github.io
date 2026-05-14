@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GLITCH E-01 : RECODE Prototype</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="kicker">観測セクター404</p>
+          <h1>GLITCH E-01 : RECODE</h1>
+        </div>
+        <div class="run-state" id="runState">EAE起動中</div>
+      </header>
+
+      <section class="play-layout" aria-label="Game">
+        <div class="stage-wrap">
+          <canvas id="game" width="960" height="600" aria-label="Line defense game canvas"></canvas>
+        </div>
+
+        <aside class="panel">
+          <div class="stat-grid">
+            <div>
+              <span>バリア</span>
+              <strong id="statHp">100</strong>
+            </div>
+            <div>
+              <span>シーケンス</span>
+              <strong id="statWave">1</strong>
+            </div>
+            <div>
+              <span>記録時間</span>
+              <strong id="statTime">0</strong>
+            </div>
+            <div>
+              <span>データXP</span>
+              <strong id="statXp">0/8</strong>
+            </div>
+            <div>
+              <span>復元率</span>
+              <strong id="statPower">1</strong>
+            </div>
+            <div>
+              <span>記録値</span>
+              <strong id="statScore">0</strong>
+            </div>
+          </div>
+
+          <div class="loadout">
+            <button id="reset" type="button">リセット</button>
+            <button id="pause" type="button">一時停止</button>
+          </div>
+
+          <section class="upgrade-panel" id="upgradePanel" hidden>
+            <h2>リコード候補</h2>
+            <div id="upgradeChoices" class="upgrade-choices"></div>
+          </section>
+
+          <section class="notes">
+            <h2>アシストログ</h2>
+            <p id="systemLog">EAE支援を開始。観測セクター404を防衛してください。</p>
+          </section>
+        </aside>
+      </section>
+    </main>
+    <script src="game.js"></script>
+  </body>
+</html>

@@ -1,304 +1,46 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="GLITCH SURVIVEは、グリッチ化した世界で敵を避けながら生き残るブラウザゲームです。操作方法、ゲーム内容、更新情報をまとめています。">
-  <link rel="canonical" href="https://taniyan8813-sys.github.io/">
-  <title>GLITCH SURVIVE | ブラウザで遊べるグリッチサバイバルゲーム</title>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="GLITCH STORYのブラウザゲーム試作版。GLITCH E-01 : RECODEとAKARI : RESTARTをPCブラウザ、スマホ横画面向けに公開しています。">
+    <link rel="canonical" href="https://taniyan8813-sys.github.io/">
+    <title>GLITCH STORY Prototypes</title>
+    <link rel="stylesheet" href="launcher.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2819687847903510" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <p class="kicker">GLITCH STORY / FIRST CHAPTER PROTOTYPES</p>
+        <h1>GLITCH STORY</h1>
+        <p class="lead">2つの視点から、同じ異変を別のゲーム構造で検証する試作版。</p>
+      </header>
 
-  <!-- AdSenseコード -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2819687847903510"
-     crossorigin="anonymous"></script>
+      <section class="prototype-grid" aria-label="Prototype selection">
+        <a class="prototype-card glitch" href="mode-prototype/index.html">
+          <span class="label">内側 / 防衛</span>
+          <h2>GLITCH E-01 : RECODE</h2>
+          <p>観測セクター404を守る固定防衛プロトタイプ。EAE支援、バリア、復元率、リコード候補を検証する。</p>
+          <strong>起動</strong>
+        </a>
 
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg: #090b10;
-      --panel: #111827;
-      --panel-2: #172033;
-      --line: #2b3855;
-      --text: #eef4ff;
-      --muted: #aeb9cc;
-      --accent: #76f7d0;
-      --danger: #ff5d8f;
-      --gold: #ffd166;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif;
-      color: var(--text);
-      background: var(--bg);
-      line-height: 1.75;
-    }
-
-    a {
-      color: inherit;
-    }
-
-    .hero {
-      min-height: 72vh;
-      display: grid;
-      align-items: end;
-      position: relative;
-      padding: 32px 20px;
-      background:
-        linear-gradient(180deg, rgba(9, 11, 16, 0.35), rgba(9, 11, 16, 0.96)),
-        url("https://taniyan8813-sys.github.io/glitch-game/assets/bg_glitch_world.png") center / cover;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .hero-inner,
-    .content {
-      width: min(1040px, 100%);
-      margin: 0 auto;
-    }
-
-    .eyebrow {
-      margin: 0 0 10px;
-      color: var(--accent);
-      font-size: 0.85rem;
-      letter-spacing: 0;
-      font-weight: 700;
-    }
-
-    h1 {
-      margin: 0;
-      max-width: 820px;
-      font-size: clamp(2.3rem, 8vw, 5rem);
-      line-height: 1;
-      letter-spacing: 0;
-    }
-
-    .lead {
-      max-width: 680px;
-      margin: 18px 0 24px;
-      color: #d8e2f2;
-      font-size: 1.05rem;
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 44px;
-      padding: 10px 18px;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: rgba(17, 24, 39, 0.82);
-      text-decoration: none;
-      font-weight: 700;
-    }
-
-    .button.primary {
-      background: var(--accent);
-      color: #062018;
-      border-color: transparent;
-    }
-
-    main {
-      padding: 36px 20px 48px;
-    }
-
-    section {
-      margin: 0 auto 28px;
-      padding-bottom: 26px;
-      border-bottom: 1px solid rgba(43, 56, 85, 0.72);
-    }
-
-    h2 {
-      margin: 0 0 12px;
-      font-size: 1.35rem;
-      letter-spacing: 0;
-    }
-
-    p {
-      margin: 0 0 14px;
-      color: var(--muted);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-      margin-top: 16px;
-    }
-
-    .item {
-      min-height: 150px;
-      padding: 18px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--panel);
-    }
-
-    .item strong {
-      display: block;
-      margin-bottom: 8px;
-      color: var(--text);
-    }
-
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
-      padding: 0;
-      margin: 18px 0 0;
-      list-style: none;
-    }
-
-    .steps li {
-      min-height: 120px;
-      padding: 14px;
-      border-radius: 8px;
-      background: var(--panel-2);
-      border: 1px solid var(--line);
-      color: var(--muted);
-    }
-
-    .steps b {
-      display: block;
-      color: var(--gold);
-      margin-bottom: 6px;
-    }
-
-    .notice {
-      padding: 18px;
-      border: 1px solid rgba(118, 247, 208, 0.45);
-      border-radius: 8px;
-      background: rgba(118, 247, 208, 0.08);
-    }
-
-    .links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    footer {
-      padding: 24px 20px 36px;
-      color: var(--muted);
-      text-align: center;
-      border-top: 1px solid var(--line);
-    }
-
-    @media (max-width: 760px) {
-      .hero {
-        min-height: 68vh;
-      }
-
-      .grid,
-      .steps {
-        grid-template-columns: 1fr;
-      }
-
-      .button {
-        width: 100%;
-      }
-    }
-  </style>
-</head>
-<body>
-  <header class="hero">
-    <div class="hero-inner">
-      <p class="eyebrow">BROWSER GAME / GLITCH ACTION</p>
-      <h1>GLITCH SURVIVE</h1>
-      <p class="lead">
-        グリッチ化した世界で、迫りくる敵を避けながら生き残るブラウザゲームです。
-        ダウンロード不要で、PCブラウザからすぐにプレイできます。
-      </p>
-      <div class="actions">
-        <a class="button primary" href="https://taniyan8813-sys.github.io/glitch-game/">ゲームをプレイ</a>
-        <a class="button" href="#about">ゲーム内容を見る</a>
-        <a class="button" href="https://taniyan8813-sys.github.io/glitch-game/privacy.html">プライバシーポリシー</a>
-      </div>
-    </div>
-  </header>
-
-  <main>
-    <div class="content">
-      <section id="about">
-        <h2>GLITCH SURVIVEについて</h2>
-        <p>
-          GLITCH SURVIVEは、壊れたデータ空間を舞台にしたシンプルなサバイバルゲームです。
-          プレイヤーはグリッチ世界に取り残されたキャラクターを操作し、敵やノイズを避けながら生存時間を伸ばしていきます。
-        </p>
-        <p>
-          短い時間で遊べることを重視しており、制作中のゲームやWeb公開の検証用ページとしても運用しています。
-          今後はGLITCH E-01など、同じ世界観を持つ短編ゲームやADV作品への導線も追加していく予定です。
-        </p>
+        <a class="prototype-card akari" href="survival-prototype/index.html">
+          <span class="label">外側 / 突破</span>
+          <h2>AKARI : RESTART</h2>
+          <p>敵群を避けながらヒカリへ近づくサバイバル・ローグライト。移動、回避、信号XP、成長選択を検証する。</p>
+          <strong>起動</strong>
+        </a>
       </section>
 
-      <section>
-        <h2>ゲームの特徴</h2>
-        <div class="grid">
-          <div class="item">
-            <strong>ブラウザで起動</strong>
-            <p>インストール不要で、GitHub Pages上からそのまま遊べます。</p>
-          </div>
-          <div class="item">
-            <strong>短時間プレイ</strong>
-            <p>数分単位で挑戦できるため、空き時間に遊びやすい構成です。</p>
-          </div>
-          <div class="item">
-            <strong>グリッチ世界</strong>
-            <p>壊れたデータ、ノイズ、サバイバルをテーマにした世界観です。</p>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>遊び方</h2>
-        <ul class="steps">
-          <li><b>1. 開始</b>ゲームページを開き、タイトル画面からプレイを開始します。</li>
-          <li><b>2. 移動</b>画面内のキャラクターを操作し、敵や危険なオブジェクトを避けます。</li>
-          <li><b>3. 生存</b>できるだけ長く生き残り、スコアや成長を狙います。</li>
-          <li><b>4. 再挑戦</b>失敗してもすぐに再挑戦できます。</li>
+      <section class="status-panel">
+        <h2>現在の方針</h2>
+        <ul>
+          <li>第二章のAI正体、観測者の正体、E-02以降はまだ入れない。</li>
+          <li>物語の核心説明より、操作中の違和感・観測ログ・ノイズ演出を優先する。</li>
+          <li>PCブラウザとスマホ横画面で遊べる形を維持する。</li>
         </ul>
       </section>
-
-      <section>
-        <h2>更新情報</h2>
-        <div class="notice">
-          <p>
-            このページはAdSense申請とゲーム公開導線のために整備しています。
-            ゲーム本体の改善、説明文の追加、関連作品へのリンク追加を順次行います。
-          </p>
-          <p>
-            次の制作候補として、GLITCH E-01の短編2DADVを進行中です。
-            GLITCH SURVIVEは、同じ制作ラインで作られた初期ゲームとして扱います。
-          </p>
-        </div>
-      </section>
-
-      <section>
-        <h2>関連リンク</h2>
-        <p>ゲーム本体、ソースコード、プライバシーポリシーはこちらから確認できます。</p>
-        <div class="links">
-          <a class="button primary" href="https://taniyan8813-sys.github.io/glitch-game/">GLITCH SURVIVEを遊ぶ</a>
-          <a class="button" href="https://github.com/taniyan8813-sys/glitch-game">ゲーム本体リポジトリ</a>
-          <a class="button" href="https://github.com/taniyan8813-sys/taniyan8813-sys.github.io">このサイトのリポジトリ</a>
-          <a class="button" href="https://taniyan8813-sys.github.io/glitch-game/privacy.html">プライバシーポリシー</a>
-        </div>
-      </section>
-    </div>
-  </main>
-
-  <footer>
-    <small>&copy; 2026 GLITCH SURVIVE. Browser game project by taniyan8813-sys.</small>
-  </footer>
-</body>
+    </main>
+  </body>
 </html>
